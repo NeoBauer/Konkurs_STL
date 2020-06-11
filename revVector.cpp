@@ -3,20 +3,30 @@
 #include <numeric>
 #include <vector>
 
+int counter = 0;
+
 void printVec (std::vector<int>& vec) {
+    std::cout << counter << ". ";
     for (auto i: vec) {
         std::cout << i << " ";
     }
     std::cout << '\n';
+    counter++;
 }
 
 int main() {
 std::vector<int> vector {1, 0, 5, 2, 7};
+std::vector<int> revVector;
 std::cout << "Original vector: " << '\n';
 printVec(vector);
-std::vector<int> revVector (5);
 
 std::cout << "Start reversing: " << '\n';
+
+for (auto it = vector.crbegin() ; it != vector.crend() ; ++it) {
+    revVector.push_back(*it);
+}
+printVec(revVector);
+
 std::copy(vector.crbegin(), vector.crend(), revVector.begin());
 printVec(revVector);
 std::copy(vector.cbegin(), vector.cend(), revVector.rbegin());
@@ -29,6 +39,7 @@ printVec(revVector);
 
 std::copy_if(vector.crbegin(), vector.crend(), revVector.begin(), [](int i){return true;});
 printVec(revVector);
+
 std::copy_if(vector.cbegin(), vector.cend(), revVector.rbegin(), [](int i){return true;});
 printVec(revVector);
 
