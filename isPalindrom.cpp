@@ -55,6 +55,15 @@ bool isPalindromWithCopyIf(std::string& text) {
     return CheckResult(text, revText);
 }
 
+bool isPalindromWithCopyN(std::string& text) {
+    std::string revText;
+    revText.resize(text.size());
+
+    std::copy_n(text.rbegin(), text.size(), revText.begin());
+
+    return CheckResult(text, revText);
+}
+
 bool isPalindromWithRevCopy(std::string& text) {
     std::string revText;
     revText.resize(text.size());
@@ -99,7 +108,8 @@ bool isPalindromWithForEach(std::string& text) {
     std::for_each(text.begin(), std::next(text.begin(), text.size() / 2),
                   [&](char c) mutable {
                       firstHalf[index] = c;
-                      secondHalf[index++] = text[text.size() - 1 - index];
+                      secondHalf[index] = text[text.size() - 1 - index];
+                      index++;
                   });
 
     return CheckResult(firstHalf, secondHalf);
@@ -111,7 +121,7 @@ bool isPalindromWithCountIf(std::string& text) {
                                         [&](char c) {
                                             return text[text.size() - 1 - index++] == c;
                                         });
-    if (correctCharsNum == text.size() / 2) {
+    if (correctCharsNum == static_cast<int>(text.size() / 2)) {
         palindromCnt++;
         return true;
     }
@@ -201,7 +211,7 @@ bool isPalindromWithReplaceIf(std::string text) {
 bool isPalindromWithSwap(std::string& text) {
     std::string revText = text;
     int j = revText.size() - 1;
-    for (int i = 0; i < revText.size() / 2; i++, j--) {
+    for (size_t i = 0; i < revText.size() / 2; i++, j--) {
         std::swap(revText[i], revText[j]);
     }
 
@@ -296,8 +306,8 @@ bool isPalindromWithForeachN(std::string& text) {
                     [&](char c) {
                         if (c != text[index--]) {
                                 result = false;
-                            }});
-                
+                            } });
+
     if (result) {
         palindromCnt++;
         return true;
@@ -309,11 +319,12 @@ bool isPalindromWithForeachN(std::string& text) {
 
 int main() {
     std::string text = "Elu, becz - cebule!";  // is palindrome
-    //text = "safopdsfodsghviojdacokads dogf dsoadsagf#@$^%$#Q fds Fsfg sDFq!@2 ";  // isn't palindrome
+    //text = "abc";                               // isn't palindrome
     PrepareString(text);
 
     isPalindromWithCopy(text);
     isPalindromWithCopyIf(text);
+    isPalindromWithCopyN(text);
     isPalindromWithRevCopy(text);
     isPalindromWithRev(text);
     isPalindromWithMismatch(text);
