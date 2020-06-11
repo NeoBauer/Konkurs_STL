@@ -199,30 +199,50 @@ bool isPalindromWithReplaceIf(std::string text) {
 }
 
 bool isPalindromWithSwap(std::string& text) {
-    std::string textRev = text;
-    int j = textRev.size() - 1;
-    for (int i = 0; i < textRev.size() / 2; i++, j--) {
-        std::swap(textRev[i], textRev[j]);
+    std::string revText = text;
+    int j = revText.size() - 1;
+    for (int i = 0; i < revText.size() / 2; i++, j--) {
+        std::swap(revText[i], revText[j]);
     }
 
-    return CheckResult(text, textRev);
+    return CheckResult(text, revText);
 }
 
 bool isPalindromWithIterSwap(std::string& text) {
-    std::string textRev = text;
-    auto rIt = textRev.rbegin();
-    auto it = textRev.begin();
-    std::for_each(textRev.begin(), std::next(textRev.begin(), textRev.size() / 2),
+    std::string revText = text;
+    auto rIt = revText.rbegin();
+    auto it = revText.begin();
+    std::for_each(revText.begin(), std::next(revText.begin(), revText.size() / 2),
                   [&](char c) mutable {
                       std::iter_swap(it++, rIt++);
                   });
 
-    return CheckResult(text, textRev);
+    return CheckResult(text, revText);
+}
+
+bool isPalindromWithRotate(std::string text) {
+    std::string revText = text;
+    std::rotate(text.begin(), std::next(text.begin(), text.size() / 2), text.end());
+
+    auto startIt = text.begin();
+    if (text.size() % 2 == 1 && text.size() > 1)
+        startIt++;
+    
+    bool result = std::equal(startIt, std::next(text.begin(), text.size() / 2), text.rbegin());
+
+    if (result) {
+        palindromCnt++;
+        return true;
+    }
+
+    notPalindromCnt++;
+    return false;
 }
 
 int main() {
-    std::string text = "Elu, becz - cebule!";  // is palindrome
-    //text = "safopdsfodsghviojdacokads dogf dsoadsagf#@$^%$#Q fds Fsfg sDFq!@2 "; // isn't palindrome
+    std::string text = "Elu, becz - cebule!";                                     // is palindrome
+    //text = "safopdsfodsghviojdacokads dogf dsoadsagf#@$^%$#Q fds Fsfg sDFq!@2 ";  // isn't palindrome
+    //text = "";
     PrepareString(text);
 
     isPalindromWithCopy(text);
@@ -240,6 +260,7 @@ int main() {
     isPalindromWithReplaceIf(text);
     isPalindromWithSwap(text);
     isPalindromWithIterSwap(text);
+    isPalindromWithRotate(text);
 
     PrintResult();
 
