@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iterator>
+#include <numeric>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -18,15 +19,13 @@ auto removeDuplicates(std::string& str) {
         return s;
     });
 
-    return vecOfSplitStr;
+    std::string resultString;
+    return accumulate(begin(vecOfSplitStr), end(vecOfSplitStr), resultString);
 }
 
 int main() {
     std::string text = "Ala ma ma kota, a kot ma ma Ale Ale.";
     std::cout << "Original text: " << text << '\n';
-    auto result = removeDuplicates(text);
-    for (const auto& el : result) {
-        std::cout << el;
-    }
+    std::cout << "After removing duplicates: " << removeDuplicates(text) << '\n';
     return 0;
 }
