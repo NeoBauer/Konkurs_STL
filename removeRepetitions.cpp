@@ -26,6 +26,6 @@ auto removeDuplicates(std::string& str) {
 int main() {
     std::string text = "Ala ma ma kota, a kot ma ma Ale Ale.";
     std::cout << "Original text: " << text << '\n';
-    std::cout << removeDuplicates(text);
+    std::cout << "After removing duplicates: " << removeDuplicates(text) << '\n';
     return 0;
 }
