@@ -18,14 +18,14 @@ void PrepareString(std::string& text) {
     text.erase(std::remove_if(text.begin(), text.end(), deleteSpecialChars), text.end());
 }
 
-void CheckResult(std::string& text, std::string& revText) {
-    if (revText == text)
+bool CheckResult(std::string& text, std::string& revText) {
+    if (revText == text) {
         palindromCnt++;
-    else
+        return true;
+    } else {
         notPalindromCnt++;
-
-    revText.clear();
-    revText.resize(text.size());
+        return false;
+    }
 }
 
 void PrintResult() {
@@ -33,41 +33,66 @@ void PrintResult() {
               << "Find palindrom num:" << palindromCnt;
     std::cout << '\n'
               << "No find palindrom num: " << notPalindromCnt << '\n';
+
+    if (palindromCnt > 0 && notPalindromCnt == 0) {
+        std::cout << "\n *** Input text is palindrom ***";
+    } else {
+        std::cout << "\n *** Input text isn't palindrom *** \n";
+    }
 }
 
-bool isPalindrom(std::string& text) {
+bool isPalindromWithCopy(std::string& text) {
     std::string revText;
     revText.resize(text.size());
 
-    // first solution
     std::copy(text.rbegin(), text.rend(), revText.begin());
-    CheckResult(text, revText);
+    return CheckResult(text, revText);
+}
 
-    // second solution
+bool isPalindromWithCopyIf(std::string& text) {
+    std::string revText;
+    revText.resize(text.size());
+
     std::copy_if(text.rbegin(), text.rend(), revText.begin(), [](char c) { return true; });
-    CheckResult(text, revText);
+    return CheckResult(text, revText);
+}
 
-    // third solution
+bool isPalindromWithRevCopy(std::string& text) {
+    std::string revText;
+    revText.resize(text.size());
+
     std::reverse_copy(text.begin(), text.end(), revText.begin());
-    CheckResult(text, revText);
+    return CheckResult(text, revText);
+}
 
-    // fourth solution
+bool isPalindromWithRev(std::string& text) {
+    std::string revText;
+    revText.resize(text.size());
     revText = text;
+
     std::reverse(revText.begin(), revText.end());
-    CheckResult(text, revText);
+    return CheckResult(text, revText);
+}
 
-    //fifth solution
+bool isPalindromWithMismatch(std::string& text) {
     auto missIt = std::mismatch(text.begin(), text.end(), text.rbegin(), text.rend());
-    if (missIt.first == text.end())
+    if (missIt.first == text.end()) {
         palindromCnt++;
-    else
-        notPalindromCnt++;
+        return true;
+    }
 
-    //sixth solution
+    notPalindromCnt++;
+    return false;
+}
+
+bool isPalindromWithStringConstructor(std::string& text) {
+    std::string revText;
+    revText.resize(text.size());
     revText = std::string(text.rbegin(), text.rend());
-    CheckResult(text, revText);
+    return CheckResult(text, revText);
+}
 
-    //seventh solution
+bool isPalindromWithForEach(std::string& text) {
     std::string firstHalf;
     std::string secondHalf;
     firstHalf.resize(text.size() / 2);
@@ -76,82 +101,104 @@ bool isPalindrom(std::string& text) {
     std::for_each(text.begin(), std::next(text.begin(), text.size() / 2),
                   [&](char c) mutable {
                       firstHalf[index] = c;
-                      secondHalf[index] = text[text.size() - 1 - index];
-                      index++;
+                      secondHalf[index++] = text[text.size() - 1 - index];
                   });
-    CheckResult(firstHalf, secondHalf);
 
-    //eigth solution
-    index = 0;
+    return CheckResult(firstHalf, secondHalf);
+}
+
+bool isPalindromWithCountIf(std::string& text) {
+    size_t index = 0;
     int correctCharsNum = std::count_if(text.begin(), std::next(text.begin(), text.size() / 2),
                                         [&](char c) {
                                             return text[text.size() - 1 - index++] == c;
                                         });
-    if (correctCharsNum == text.size() / 2)
+    if (correctCharsNum == text.size() / 2) {
         palindromCnt++;
-    else
-        notPalindromCnt++;
+        return true;
+    }
 
-    //ninth solution
-    index = 0;
+    notPalindromCnt++;
+    return false;
+}
+
+bool isPalindromWithFindIfNot(std::string& text) {
+    size_t index = 0;
     auto findIt = std::find_if_not(text.begin(), std::next(text.begin(), text.size() / 2),
                                    [&](char c) {
                                        return text[text.size() - 1 - index++] == c;
                                    });
-    if (findIt == std::next(text.begin(), text.size() / 2))
+    if (findIt == std::next(text.begin(), text.size() / 2)) {
         palindromCnt++;
-    else
-        notPalindromCnt++;
+        return true;
+    }
 
-    //tenth solution
+    notPalindromCnt++;
+    return false;
+}
+
+bool isPalindromWithEqual(std::string& text) {
     bool result = std::equal(text.begin(), std::next(text.begin(), text.size() / 2),
                              text.rbegin(), std::next(text.rbegin(), text.size() / 2));
 
-    if (result)
+    if (result) {
         palindromCnt++;
-    else
-        notPalindromCnt++;
+        return true;
+    }
 
-    //eleventh solution
-    std::string textCopy;  // must stored original text string for next solutions
-    textCopy.resize(text.size());
-    std::copy(text.begin(), text.end(), textCopy.begin());
-    revText.resize(textCopy.size() / 2);
-    std::move(textCopy.rbegin(), std::next(textCopy.rbegin(), textCopy.size() / 2),
+    notPalindromCnt++;
+    return false;
+}
+
+bool isPalindromWithMove(std::string text) {
+    std::string revText;
+    std::string firstHalf;
+    firstHalf.resize(text.size() / 2);
+    revText.resize(text.size() / 2);
+    std::move(text.rbegin(), std::next(text.rbegin(), text.size() / 2),
               revText.begin());
-    firstHalf = textCopy.substr(0, textCopy.size() / 2);
-    CheckResult(firstHalf, revText);
+    firstHalf = text.substr(0, text.size() / 2);
+    return CheckResult(firstHalf, revText);
+}
 
-    //twelfth solution
-    index = 0;
+bool isPalindromWithRemoveIf(std::string& text) {
+    std::string revText;
+    revText.resize(text.size());
+    size_t index = 0;
     revText = text;
     revText.erase(std::remove_if(revText.begin(),
                                  std::next(revText.begin(), revText.size() / 2),
                                  [&](char c) { return text[text.size() - 1 - index++] != c; }),
                   revText.end());
 
-    if (revText.size() != text.size() / 2)
+    if (revText.size() != text.size() / 2) {
         notPalindromCnt++;
-    else
-        palindromCnt++;
+        return false;
+    }
 
-    PrintResult();
-
-    if (palindromCnt > 0 && notPalindromCnt == 0)
-        return true;
-
-    return false;
+    palindromCnt++;
+    return true;
 }
 
 int main() {
-    std::string text = "Elu, becz - cebule!";
+    std::string text = "Elu, becz - cebule!"; // is palindrome
+    //text = "safopdsfodsghviojdacokads dogf dsoadsagf#@$^%$#Q fds Fsfg sDFq!@2 "; // isn't palindrome
     PrepareString(text);
 
-    if (isPalindrom(text)) {
-        std::cout << "TRUE";
-    } else {
-        std::cout << "FALSE";
-    }
+    isPalindromWithCopy(text);
+    isPalindromWithCopyIf(text);
+    isPalindromWithRevCopy(text);
+    isPalindromWithRev(text);
+    isPalindromWithMismatch(text);
+    isPalindromWithStringConstructor(text);
+    isPalindromWithForEach(text);
+    isPalindromWithCountIf(text);
+    isPalindromWithFindIfNot(text);
+    isPalindromWithEqual(text);
+    isPalindromWithMove(text);
+    isPalindromWithRemoveIf(text);
+
+    PrintResult();
 
     return 0;
 }
