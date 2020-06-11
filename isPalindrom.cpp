@@ -8,8 +8,6 @@ static int palindromCnt = 0;
 static int notPalindromCnt = 0;
 
 void PrepareString(std::string& text) {
-    std::cout << "Prepare string" << '\n';
-
     auto deleteSpecialChars = [](char& c) {
         c = std::tolower(c);
         return std::isspace(c) || std::ispunct(c);
@@ -180,8 +178,50 @@ bool isPalindromWithRemoveIf(std::string& text) {
     return true;
 }
 
+bool isPalindromWithReplaceIf(std::string text) {
+    char magic = '!';
+    size_t index = text.size() - 1;
+    std::replace_if(
+        text.begin(), std::next(text.begin(), text.size() / 2),
+        [&](char c) {
+            return c != text[index--];
+        },
+        magic);
+    auto pos = text.find(magic);
+
+    if (pos != text.npos) {
+        notPalindromCnt++;
+        return false;
+    }
+
+    palindromCnt++;
+    return true;
+}
+
+bool isPalindromWithSwap(std::string& text) {
+    std::string textRev = text;
+    int j = textRev.size() - 1;
+    for (int i = 0; i < textRev.size() / 2; i++, j--) {
+        std::swap(textRev[i], textRev[j]);
+    }
+
+    return CheckResult(text, textRev);
+}
+
+bool isPalindromWithIterSwap(std::string& text) {
+    std::string textRev = text;
+    auto rIt = textRev.rbegin();
+    auto it = textRev.begin();
+    std::for_each(textRev.begin(), std::next(textRev.begin(), textRev.size() / 2),
+                  [&](char c) mutable {
+                      std::iter_swap(it++, rIt++);
+                  });
+
+    return CheckResult(text, textRev);
+}
+
 int main() {
-    std::string text = "Elu, becz - cebule!"; // is palindrome
+    std::string text = "Elu, becz - cebule!";  // is palindrome
     //text = "safopdsfodsghviojdacokads dogf dsoadsagf#@$^%$#Q fds Fsfg sDFq!@2 "; // isn't palindrome
     PrepareString(text);
 
@@ -197,6 +237,9 @@ int main() {
     isPalindromWithEqual(text);
     isPalindromWithMove(text);
     isPalindromWithRemoveIf(text);
+    isPalindromWithReplaceIf(text);
+    isPalindromWithSwap(text);
+    isPalindromWithIterSwap(text);
 
     PrintResult();
 
