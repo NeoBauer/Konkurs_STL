@@ -269,7 +269,7 @@ bool isPalindromWithAnyOf(std::string& text) {
 bool isPalindromWithNoneOf(std::string& text) {
     size_t index = text.size() - 1;
     bool result = std::none_of(text.begin(), std::next(text.begin(), text.size() / 2),
-                              [&](char c) { return c != text[index--]; });
+                               [&](char c) { return c != text[index--]; });
 
     if (result) {
         palindromCnt++;
@@ -280,6 +280,32 @@ bool isPalindromWithNoneOf(std::string& text) {
     return false;
 }
 
+bool isPalindromWithTransform(std::string& text) {
+    std::string revText;
+
+    std::transform(text.rbegin(), text.rend(), std::back_inserter(revText),
+                   [](char c) { return c; });
+
+    return CheckResult(text, revText);
+}
+
+bool isPalindromWithForeachN(std::string& text) {
+    int index = text.size() - 1;
+    int result = true;
+    std::for_each_n(text.begin(), text.size() / 2,
+                    [&](char c) {
+                        if (c != text[index--]) {
+                                result = false;
+                            }});
+                
+    if (result) {
+        palindromCnt++;
+        return true;
+    }
+
+    notPalindromCnt++;
+    return false;
+}
 
 int main() {
     std::string text = "Elu, becz - cebule!";  // is palindrome
@@ -305,7 +331,8 @@ int main() {
     isPalindromWithAllOf(text);
     isPalindromWithAnyOf(text);
     isPalindromWithNoneOf(text);
-
+    isPalindromWithTransform(text);
+    isPalindromWithForeachN(text);
 
     PrintResult();
 
