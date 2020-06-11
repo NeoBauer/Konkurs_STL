@@ -221,14 +221,13 @@ bool isPalindromWithIterSwap(std::string& text) {
 }
 
 bool isPalindromWithRotate(std::string text) {
-    std::string revText = text;
     std::rotate(text.begin(), std::next(text.begin(), text.size() / 2), text.end());
 
     auto startIt = text.begin();
     if (text.size() % 2 == 1 && text.size() > 1)
         startIt++;
-    
-    bool result = std::equal(startIt, std::next(text.begin(), text.size() / 2), text.rbegin());
+
+    bool result = std::equal(startIt, std::next(startIt, text.size() / 2), text.rbegin());
 
     if (result) {
         palindromCnt++;
@@ -239,10 +238,52 @@ bool isPalindromWithRotate(std::string text) {
     return false;
 }
 
+bool isPalindromWithAllOf(std::string& text) {
+    size_t index = text.size() - 1;
+    bool result = std::all_of(text.begin(), std::next(text.begin(), text.size() / 2),
+                              [&](char c) { return c == text[index--]; });
+
+    if (result) {
+        palindromCnt++;
+        return true;
+    }
+
+    notPalindromCnt++;
+    return false;
+}
+
+bool isPalindromWithAnyOf(std::string& text) {
+    size_t index = text.size() - 1;
+    bool result = std::any_of(text.begin(), std::next(text.begin(), text.size() / 2),
+                              [&](char c) { return c != text[index--]; });
+
+    if (!result) {
+        palindromCnt++;
+        return true;
+    }
+
+    notPalindromCnt++;
+    return false;
+}
+
+bool isPalindromWithNoneOf(std::string& text) {
+    size_t index = text.size() - 1;
+    bool result = std::none_of(text.begin(), std::next(text.begin(), text.size() / 2),
+                              [&](char c) { return c != text[index--]; });
+
+    if (result) {
+        palindromCnt++;
+        return true;
+    }
+
+    notPalindromCnt++;
+    return false;
+}
+
+
 int main() {
-    std::string text = "Elu, becz - cebule!";                                     // is palindrome
+    std::string text = "Elu, becz - cebule!";  // is palindrome
     //text = "safopdsfodsghviojdacokads dogf dsoadsagf#@$^%$#Q fds Fsfg sDFq!@2 ";  // isn't palindrome
-    //text = "";
     PrepareString(text);
 
     isPalindromWithCopy(text);
@@ -261,6 +302,10 @@ int main() {
     isPalindromWithSwap(text);
     isPalindromWithIterSwap(text);
     isPalindromWithRotate(text);
+    isPalindromWithAllOf(text);
+    isPalindromWithAnyOf(text);
+    isPalindromWithNoneOf(text);
+
 
     PrintResult();
 
